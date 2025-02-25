@@ -19,7 +19,7 @@ and not interacting with others in each round.
 */
 
 /**
- * Authors: 
+ * Author: Sadie Bush
  * 
  * What we are simulating:
  * 
