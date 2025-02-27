@@ -21,11 +21,11 @@ and not interacting with others in each round.
 /**
  * Author: Sadie Bush
  * 
- * What we are simulating:
+ * What we are simulating: Intervention model
  * 
- * What elements we have to add:
+ * What elements we have to add: Death rate
  * 
- * In plain language, what our model does:
+ * In plain language, what our model does: This model will simulate the rate at which people die from getting infected.
  * 
  */
 
