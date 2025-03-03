@@ -1,3 +1,4 @@
+import { visitParameterList } from "typescript";
 import { shufflePopulation } from "../../lib/shufflePopulation";
 
 /* Update this code to simulate a simple disease model! */
@@ -33,9 +34,7 @@ and not interacting with others in each round.
 
 export const defaultSimulationParameters = {
   infectionChance: 50,
-  // Add any new parameters you want here with their initial values
-  //  -- you will also have to add inputs into your jsx file if you want
-  // your user to be able to change these parameters.
+  deathRate: 0.10 // chance of death for infected
 };
 
 /* Creates your initial population. By default, we *only* track whether people
@@ -86,11 +85,22 @@ const updateIndividual = (person, contact, params) => {
 
 // Example: Update population (students decide what happens each turn)
 export const updatePopulation = (population, params) => {
+   
+    for (let person of population) {
+      if (person.infect && Math.random() < visitParameterList.deathRate) {
+        person.dead = true;
+        person.infected = false;
+      }
+    }
+
   // Include "shufflePopulation if you want to shuffle...
   // population = shufflePopulation(population);
   // Example logic... each person is in contact with the person next to them...
   for (let i = 0; i < population.length; i++) {
     let p = population[i];
+    if (p.dead) {
+      continue; // skip
+    }
     // This logic just grabs the next person in line -- you will want to 
     // change this to fit your model! 
     let contact = population[(i + 1) % population.length];
@@ -110,7 +120,7 @@ export const trackedStats = [
 
 
 // Example: Compute stats (students customize)
-export const computeStatistics = (population, round) => {
+export const computeStatisticsOld = (population, round) => {
   let infected = 0;
   let newlyInfected = 0;
   for (let p of population) {
@@ -123,4 +133,19 @@ export const computeStatistics = (population, round) => {
   }
   return { round, infected, newlyInfected };
 };
+
+export const computeStatistics = (population, previousTurnCount) => {
+  const infectedCount = population.filter((p) => p.infected).length;
+  const deadCount = population.filter((p) => p.dead).length; // Count the dead
+  const healthyCount = population.filter((p) => !p.infected && !p.dead).length;
+
+  // Calculate any other stats, then return them
+  return {
+    turn: previousTurnCount + 1,
+    infected: infectedCount,
+    dead: deadCount, // Include death count in the statistics
+    healthy: healthyCount,
+  };
+};
+
 

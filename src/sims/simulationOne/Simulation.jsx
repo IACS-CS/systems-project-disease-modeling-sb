@@ -26,7 +26,9 @@ const renderPatients = (population) => {
   }
 
   function renderEmoji(p) {
-    if (p.newlyInfected) {
+    if (p.dead) {
+      return "💀"; // Skull emoji fro dead people
+    } else if (p.newlyInfected) {
       return "🤧"; // Sneezing Face for new cases
     } else if (p.infected) {
       return "🤢"; // Vomiting Face for already sick
