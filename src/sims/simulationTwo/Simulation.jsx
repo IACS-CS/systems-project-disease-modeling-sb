@@ -5,6 +5,7 @@ import {
   computeStatistics,
   trackedStats,
   defaultSimulationParameters,
+  createRats
 } from "./diseaseModel";
 import { renderChart } from "../../lib/renderChart";
 import { renderTable } from "../../lib/renderTable";

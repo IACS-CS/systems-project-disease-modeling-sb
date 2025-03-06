@@ -38,18 +38,17 @@ import { shufflePopulation } from "../../lib/shufflePopulation";
  * What parameters we will allow users to "tweak" to adjust the model: Modify rat population
  * 
  * In plain language, what our model does: My model will simulate the Black Plague by adding infected rats which get people sick who eventually die
- * 
- */
+ 
+ 
 
 
 // Default parameters -- any properties you add here
 // will be passed to your disease model when it runs.
 
-export const defaultSimulationParameters = {
   // Add any parameters you want here with their initial values
   //  -- you will also have to add inputs into your jsx file if you want
   // your user to be able to change these parameters.
-};
+
 
 /* Creates your initial population. By default, we *only* track whether people
 are infected. Any other attributes you want to track would have to be added
