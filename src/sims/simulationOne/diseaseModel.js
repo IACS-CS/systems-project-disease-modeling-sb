@@ -85,9 +85,9 @@ const updateIndividual = (person, contact, params) => {
 
 // Example: Update population (students decide what happens each turn)
 export const updatePopulation = (population, params) => {
-   
+   population = shufflePopulation(population)
     for (let person of population) {
-      if (person.infect && Math.random() < visitParameterList.deathRate) {
+      if (person.infected && Math.random() < params.deathRate) {
         person.dead = true;
         person.infected = false;
       }

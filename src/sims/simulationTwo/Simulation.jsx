@@ -15,21 +15,27 @@ let maxSize = 1000; // Max number of icons we render (we can simulate big popula
 /**
  * Renders a subset of the population as a list of patients with emojis indicating their infection status.
  */
-const renderPatients = (population) => {
+// Updating the renderPatients function to include rats and death/immune statuses
+
+const renderPatients = (population, rats) => {
   let amRenderingSubset = population.length > maxSize;
-  const popSize = population.length;
+  const popSize = population.length + rats.length; // Include rats in the total population
   if (popSize > maxSize) {
-    population = population.slice(0, maxSize);
+    population = population.slice(0, maxSize); // Limit rendered population
   }
 
   function renderEmoji(p) {
-    if (p.newlyInfected) {
-      return "🤧"; // Sneezing Face for new cases
-    } else if (p.infected) {
-      return "🤢"; // Vomiting Face for already sick
+    if (p.infected) {
+      return "🤢"; // Sick person
+    } else if (p.immune) {
+      return "😎"; // Immune person
     } else {
       return "😀"; // Healthy person
     }
+  }
+
+  function renderRatEmoji(rat) {
+    return "🐀"; // Infected rat emoji
   }
 
   function renderSubsetWarning() {
@@ -46,6 +52,11 @@ const renderPatients = (population) => {
   return (
     <>
       {renderSubsetWarning()}
+      {rats.map((rat) => (
+        <div key={rat.id} className="rat">
+          {renderRatEmoji(rat)} {/* Display infected rats */}
+        </div>
+      ))}
       {population.map((p) => (
         <div
           key={p.id}
@@ -59,7 +70,7 @@ const renderPatients = (population) => {
             }px)`,
           }}
         >
-          {renderEmoji(p)}
+          {renderEmoji(p)} {/* Display emojis for humans */}
         </div>
       ))}
     </>
@@ -68,82 +79,56 @@ const renderPatients = (population) => {
 
 const Simulation = () => {
   const [popSize, setPopSize] = useState(20);
-  const [population, setPopulation] = useState(
-    createPopulation(popSize * popSize)
-  );
+  const [population, setPopulation] = useState(createPopulation(popSize * popSize));
+  const [rats, setRats] = useState(createRats(defaultSimulationParameters.ratPopulation));
   const [diseaseData, setDiseaseData] = useState([]);
   const [lineToGraph, setLineToGraph] = useState("infected");
   const [autoMode, setAutoMode] = useState(false);
-  const [simulationParameters, setSimulationParameters] = useState(
-    defaultSimulationParameters
-  );
+  const [simulationParameters, setSimulationParameters] = useState(defaultSimulationParameters);
 
-  // Runs a single simulation step
   const runTurn = () => {
-    let newPopulation = updatePopulation([...population], simulationParameters);
+    let newPopulation = updatePopulation([...population], rats, simulationParameters);
     setPopulation(newPopulation);
     let newStats = computeStatistics(newPopulation, diseaseData.length);
     setDiseaseData([...diseaseData, newStats]);
   };
 
-  // Resets the simulation
   const resetSimulation = () => {
     setPopulation(createPopulation(popSize * popSize));
+    setRats(createRats(simulationParameters.ratPopulation));
     setDiseaseData([]);
   };
 
-  // Auto-run simulation effect
   useEffect(() => {
     if (autoMode) {
       setTimeout(runTurn, 500);
     }
-  }, [autoMode, population]);
+  }, [autoMode, population, rats]);
 
   return (
     <div>
       <section className="top">
-        <h1>My Second Custom Simulation</h1>
-        <p>
-          Edit <code>simulationTwo/diseaseModel.js</code> to define how your
-          simulation works. This one should try to replicate features of a real
-          world illness and/or intervention.
-        </p>
-
-        <p>
-          Population: {population.length}. Infected:{" "}
-          {population.filter((p) => p.infected).length}
-        </p>
-
+        <h1>Black Plague Simulation</h1>
         <button onClick={runTurn}>Next Turn</button>
         <button onClick={() => setAutoMode(true)}>AutoRun</button>
         <button onClick={() => setAutoMode(false)}>Stop</button>
         <button onClick={resetSimulation}>Reset Simulation</button>
 
-        <div>
-          {/* Add custom parameters here... */}
-          <label>
-            Population:
-            <div className="vertical-stack">
-              {/* Population uses a "square" size to allow a UI that makes it easy to slide
-          from a small population to a large one. */}
-              <input
-                type="range"
-                min="3"
-                max="1000"
-                value={popSize}
-                onChange={(e) => setPopSize(parseInt(e.target.value))}
-              />
-              <input
-                type="number"
-                value={Math.round(popSize * popSize)}
-                step="10"
-                onChange={(e) =>
-                  setPopSize(Math.sqrt(parseInt(e.target.value)))
-                }
-              />
-            </div>
-          </label>
-        </div>
+        <label>
+          Rat Population:
+          <input
+            type="range"
+            min="10"
+            max="500"
+            value={simulationParameters.ratPopulation}
+            onChange={(e) =>
+              setSimulationParameters({
+                ...simulationParameters,
+                ratPopulation: parseInt(e.target.value),
+              })
+            }
+          />
+        </label>
       </section>
 
       <section className="side-by-side">
@@ -154,11 +139,9 @@ const Simulation = () => {
             className="population-box"
             style={{ width: boxSize, height: boxSize }}
           >
-            {renderPatients(population)}
+            {renderPatients(population, rats)}
           </div>
         </div>
-
-        {renderTable(diseaseData, trackedStats)}
       </section>
     </div>
   );
