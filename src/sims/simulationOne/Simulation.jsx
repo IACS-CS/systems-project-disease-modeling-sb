@@ -186,3 +186,5 @@ const Simulation = () => {
 };
 
 export default Simulation;
+
+// Assisted by ChatGPT

@@ -103,10 +103,9 @@ export const createRats = (ratPopulation = 100) => {
   return rats;
 };
 
-// Update the population each round
 export const updatePopulation = (population, rats, params) => {
   const newPopulation = population.map((person) => {
-    if (person.infected) {
+    if (person.infected && !person.dead) { // If the person is infected and not dead
       person.daysInfected += 1;
       if (person.daysInfected > 10) {
         // Chance to recover or die after being infected for more than 10 rounds
@@ -114,11 +113,12 @@ export const updatePopulation = (population, rats, params) => {
           person.immune = true; // Person gains immunity
           person.infected = false; // No longer infected
         } else if (Math.random() < params.deathRate) {
-          person.infected = false; // Person dies
+          person.dead = true; // Person dies (turn into a skull emoji later)
+          person.infected = false; // No longer infected
         }
       }
-    } else {
-      // Chance to be infected by humans (infection rate) or by rats
+    } else if (!person.dead) {
+      // Chance to be infected by humans or rats if the person is not dead
       if (Math.random() < params.infectionRate) {
         if (Math.random() < 0.5) {
           // Infection from rats
@@ -139,6 +139,7 @@ export const updatePopulation = (population, rats, params) => {
 
   return newPopulation;
 };
+
 
 // Track stats
 export const trackedStats = [
@@ -162,5 +163,5 @@ export const computeStatistics = (population, round) => {
   return { round, infected, immune, dead };
 };
 
-
+// Assisted by ChatGPT
 

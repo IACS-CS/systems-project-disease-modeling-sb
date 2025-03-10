@@ -26,7 +26,9 @@ const renderPatients = (population, rats) => {
   }
 
   function renderEmoji(p) {
-    if (p.infected) {
+    if (p.dead) {
+      return "💀"; // Dead person (skull emoji)
+    } else if (p.infected) {
       return "🤢"; // Sick person
     } else if (p.immune) {
       return "😎"; // Immune person
@@ -77,6 +79,7 @@ const renderPatients = (population, rats) => {
     </>
   );
 };
+
 
 const Simulation = () => {
   const [popSize, setPopSize] = useState(20);
@@ -149,3 +152,5 @@ const Simulation = () => {
 };
 
 export default Simulation;
+
+// Assisted by ChatGPT

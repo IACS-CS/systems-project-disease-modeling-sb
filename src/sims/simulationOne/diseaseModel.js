@@ -148,4 +148,4 @@ export const computeStatistics = (population, previousTurnCount) => {
   };
 };
 
-
+// Assisted by ChatGPT
